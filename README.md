@@ -2,13 +2,12 @@
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,50:0f3d3e,100:2dd4bf&height=190&section=header&text=Abduraxmon%20Isroilov&fontSize=46&fontColor=e6fffa&fontAlignY=36&desc=SysAdmin%20%C2%B7%20IT-Infra%20%C2%B7%20Security%20%C2%B7%20DevOps&descSize=17&descAlignY=58&animation=fadeIn" width="100%"/>
 
-<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=20&duration=2800&pause=900&color=2DD4BF&center=true&vCenter=true&width=640&lines=%24+whoami+%E2%86%92+Tizim+administratori;Windows+%2F+Linux+%C2%B7+Serverlar+%C2%B7+Tarmoqlar;Pentest+%C2%B7+Recon+%2F+OSINT+%C2%B7+Vuln+Assessment;Docker+%C2%B7+AWS+%C2%B7+Nginx+%C2%B7+Avtomatlashtirish;Muammoning+alomatini+emas%2C+asl+sababini+topaman" alt="Typing SVG" /></a>
+<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=20&duration=2800&pause=900&color=2DD4BF&center=true&vCenter=true&width=640&lines=%24+whoami+%E2%86%92+Tizim+administratori;Windows+%2F+Linux+%C2%B7+Serverlar+%C2%B7+Tarmoqlar;Pentest+%C2%B7+Recon+%2F+OSINT+%C2%B7+Vuln+Assessment;AWS+EC2+%C2%B7+Docker+%C2%B7+Nginx+%C2%B7+CI%2FCD;Production+serverlar+%E2%80%94+24%2F7%2C+o%CA%BBzim+boshqaraman;Muammoning+alomatini+emas%2C+asl+sababini+topaman" alt="Typing SVG" /></a>
 
 <p>
 <a href="mailto:ourty77@gmail.com"><img src="https://img.shields.io/badge/Email-ourty77%40gmail.com-0d1117?style=for-the-badge&logo=gmail&logoColor=2dd4bf&labelColor=0d1117"/></a>
 <a href="https://t.me/isroilovxk"><img src="https://img.shields.io/badge/Telegram-@isroilovxk-0d1117?style=for-the-badge&logo=telegram&logoColor=2dd4bf&labelColor=0d1117"/></a>
 <img src="https://img.shields.io/badge/Toshkent-O%CA%BBzbekiston-0d1117?style=for-the-badge&logo=googlemaps&logoColor=2dd4bf&labelColor=0d1117"/>
-<img src="https://komarev.com/ghpvc/?username=draconuzb&style=for-the-badge&color=0f766e&label=PROFILE+VIEWS"/>
 </p>
 
 </div>
@@ -27,6 +26,7 @@ experience:
   - 3y 7m   IT sohasida amaliy tajriba
   - 1y 6m   Tizim administratori  @ O‘zR Yoshlar ishlari agentligi
   - 2y 1m   O‘qituvchi / SysAdmin @ HAAD Learning Center (axborot xavfsizligi)
+infra:       8+ loyihani AWS EC2 ga deploy qilib, production'da o‘zim yuritaman
 education:   Turan International University — Software Engineering (4-kurs)
 languages:   [ "O‘zbek — ona tili", "English — B2", "Русский — bazaviy" ]
 mindset:
@@ -106,6 +106,52 @@ mindset:
 
 </div>
 
+## ☁️ AWS va production serverlar
+
+> Kod yozish bilan to‘xtamayman: serverni ko‘taraman, himoyalayman, deploy’ni avtomatlashtiraman, zaxira nusxa olaman va 24/7 ishlab turishini kuzataman.
+
+<div align="center">
+
+**🟢 Hozir ishlab turgan servislar (jonli status)**<br/><br/>
+<a href="https://bizdaoson.uz"><img src="https://img.shields.io/website?url=https%3A%2F%2Fbizdaoson.uz&style=for-the-badge&label=bizdaoson.uz&up_message=online&down_message=offline&labelColor=0d1117&up_color=2dd4bf"/></a>
+<a href="https://market.bizdaoson.uz"><img src="https://img.shields.io/website?url=https%3A%2F%2Fmarket.bizdaoson.uz&style=for-the-badge&label=market.bizdaoson.uz&up_message=online&down_message=offline&labelColor=0d1117&up_color=2dd4bf"/></a>
+<a href="https://cybermentor.uz"><img src="https://img.shields.io/website?url=https%3A%2F%2Fcybermentor.uz&style=for-the-badge&label=cybermentor.uz&up_message=online&down_message=offline&labelColor=0d1117&up_color=2dd4bf"/></a>
+
+</div>
+
+**Men quradigan odatiy production arxitektura:**
+
+```mermaid
+flowchart LR
+    U([👤 Foydalanuvchi]) --> CF[☁️ Cloudflare<br/>DNS · Proxy · SSL]
+    TG([✈️ Telegram API]) <--> BOT
+    subgraph AWS["AWS EC2 · Ubuntu"]
+        direction LR
+        RP[Nginx / Caddy<br/>Let's Encrypt SSL] --> API[API konteyner]
+        RP --> WEB[Web konteyner]
+        BOT[Bot / worker<br/>systemd yoki Docker]
+        API --> DB[(PostgreSQL<br/>least-privilege rol + RLS)]
+        BOT --> DB
+        CRON[cron · backup.sh] -.-> DB
+    end
+    CF --> RP
+    GH[GitHub Actions] -- SSH deploy + healthcheck --> AWS
+    AWS <-. Tailscale VPN .-> MINI[🖥️ On-prem mini-PC<br/>Docker]
+```
+
+**🔧 Amalda qo‘llaydigan ops amaliyotlari (kodda dalili bilan):**
+
+| Amaliyot | Nima qilingan | Dalil |
+|---|---|---|
+| 🚀 **CI/CD** | `git push` → GitHub Actions → EC2 ga SSH → `docker compose build/up` → container **healthcheck**, healthy bo‘lmasa deploy fail bo‘ladi va log chiqadi | [deploy.yml](https://github.com/draconuzb/qoshni-taxi/blob/HEAD/.github/workflows/deploy.yml) · [crmpro](https://github.com/draconuzb/crmpro/blob/HEAD/.github/workflows/deploy.yml) |
+| 🐳 **Konteynerlar** | Prod/dev uchun alohida compose, `restart` siyosati, healthcheck, izolyatsiyalangan network, log rotation | [compose.prod](https://github.com/draconuzb/qoshni-taxi/blob/HEAD/docker-compose.prod.yml) · [crmpro](https://github.com/draconuzb/crmpro/blob/HEAD/docker-compose.prod.yml) |
+| ⚙️ **systemd** | Har bir servis alohida unit, alohida (root bo‘lmagan) user, `EnvironmentFile`, `Restart=always`, `NoNewPrivileges`, journald | [baxt-listener.service](https://github.com/draconuzb/baxt-cargo/blob/HEAD/deploy/baxt-listener.service) |
+| 💾 **Backup** | Cron orqali har kuni ishlab turgan bazadan xavfsiz nusxa (`sqlite3 .backup`), gzip, 30 kunlik rotatsiya | [backup.sh](https://github.com/draconuzb/baxt-cargo/blob/HEAD/deploy/backup.sh) |
+| 🔐 **DB xavfsizligi** | Ilova superuser bilan emas, minimal huquqli rol bilan ulanadi, shunda Row-Level Security haqiqatda ishlaydi (multi-tenant izolyatsiya) | [03-app-role.sh](https://github.com/draconuzb/gym-saas/blob/HEAD/backend/db/03-app-role.sh) |
+| 🔒 **SSL / reverse proxy** | Nginx + certbot (HTTP→HTTPS redirect), Caddy bilan avtomatik HTTPS, WebSocket proxy, Cloudflare orqali | [enable-ssl.sh](https://github.com/draconuzb/gym-saas/blob/HEAD/enable-ssl.sh) · [Caddyfile](https://github.com/draconuzb/admin-market/blob/HEAD/deploy/Caddyfile) · [nginx](https://github.com/draconuzb/cybermentor.uz/blob/HEAD/config/nginx/cybermentor.conf) |
+| 🛡️ **Server hardening + monitoring** | ufw (faqat 22/80/443), SSH uchun fail2ban, swap (OOM’dan himoya). O‘zim yozgan web-panel servislar holatini (nginx, code-server, fail2ban…) va bloklangan IP’larni ko‘rsatadi | [ctf_setup_ubuntu.sh](https://github.com/draconuzb/cybermentor.uz/blob/HEAD/ctf_setup_ubuntu.sh) · [dash_setup.sh](https://github.com/draconuzb/cybermentor.uz/blob/HEAD/dash_setup.sh) · [panel](https://github.com/draconuzb/cybermentor.uz/blob/HEAD/panel/app.py) |
+| 🔁 **Migratsiya** | Taksi botlarini shared hostingdan (Alwaysdata) AWS EC2 ga ko‘chirdim (4 ta systemd servis). Xarajatni kamaytirish uchun servisni AWS dan on-prem mini-PC ga (Docker + Tailscale) o‘tkazdim | — |
+
 ## 🚀 Loyihalar
 
 > Barcha loyihalarni o‘zim yozganman, serverga o‘zim chiqarganman va o‘zim boshqaraman: Linux server, Docker, Nginx, SSL, monitoring.
@@ -113,7 +159,7 @@ mindset:
 | Loyiha | Tavsif | Stack |
 |---|---|---|
 | 🚛 **[baxt-cargo](https://github.com/draconuzb/baxt-cargo)** | Furalar uchun AI yuk topish: Telegram guruhlarini kuzatadi, e’lonni parse qiladi, har bir mashina uchun kunlik sof marjani hisoblaydi (UZ ↔ RU reyslar) | Python · Telethon · SQLite · AI |
-| 🚕 **[qoshni-taxi](https://github.com/draconuzb/qoshni-taxi)** | O‘zbekiston va Rossiya uchun taksi platformasi, menejer dashboard bilan. AWS EC2 da systemd servislar sifatida ishlaydi | Python · FastAPI · Docker · Telegram |
+| 🚕 **[qoshni-taxi](https://github.com/draconuzb/qoshni-taxi)** | O‘zbekiston va Rossiya uchun taksi platformasi, menejer dashboard bilan. AWS EC2 da Docker, GitHub Actions orqali avtomatik deploy | Python · FastAPI · Docker · Telegram |
 | 🎓 **[crmpro](https://github.com/draconuzb/crmpro)** | O‘quv markazlari uchun CRM: Telegram bot, AI analitika, web dashboard | NestJS · Prisma · Postgres · Docker |
 | 🏪 **[admin-market](https://github.com/draconuzb/admin-market)** | Do‘konlar uchun B2B ulgurji bozor (API + mobil ilova) | FastAPI · Flutter · Postgres |
 | 🏋️ **[gym-saas](https://github.com/draconuzb/gym-saas)** | Multi-tenant sport zal boshqaruv tizimi (production) | Node · Next.js · Postgres |
